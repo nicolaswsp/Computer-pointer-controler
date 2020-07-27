@@ -1,10 +1,10 @@
 # Computer Pointer Controller
 
 *TODO:* Write a short introduction to your project
-
+This project is a computer vision application developed with Intel Distribution of OpenVINO. This application was developed to control the computer pointer controler through the gaze estimation of the eyes. This program can be input as a video or a webcam. It was used four models to run Face Detection, Facial Landmarks Detection, Head Pose Estimation and Gaze Estimation all provided by OpenVINO.
 ## Project Set Up and Installation
 *TODO:* Explain the setup procedures to run your project. For instance, this can include your project directory structure, the models you need to download and where to place them etc. Also include details about how to install the dependencies your project requires.
-
+It is required install the OpenVINO Toolkit to run the project. After the instalation, it is necessary to download the models face-detection-adas-binary-0001, landmarks-regression-retail-0009, head-pose-estimation-adas-0001, gaze-estimation-adas-0002 through the model downloader provided by OpenVino in the directory C:\Program Files (x86)\IntelSWTools\openvino_2020.1.033\deployment_tools\tools\model_downloader using the downloader.py file. The
 ## Demo
 *TODO:* Explain how to run a basic demo of your model.
 
