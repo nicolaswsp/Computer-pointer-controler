@@ -18,21 +18,18 @@ class HeadPoseEstimation:
         '''
         TODO: Use this to set your instance variables.
         '''
-        self.model_structure = model_name+'xml'
-        self.model_weights = model_name+'bin'
+        self.model_name = model_name
+        self.model_structure = self.model_name
+        self.model_weights = self.model_name.split('.')[0]+'.bin'
         self.device = device
-
-        try:
-            self.model=IENetwork(self.model_structure, self.model_weights)
-        except Exception as e:
-            raise ValueError("Could not Initialise the network. Have you \
-            enterred the correct model path?")
-        raise NotImplementedError
-
-        self.input_name=next(iter(self.model.inputs))
-        self.input_shape=self.model.inputs[self.input_name].shape
-        self.output_name=next(iter(self.model.outputs))
-        self.output_shape=self.model.outputs[self.output_name].shape
+        self.extensions = extensions
+        self.core = None
+        self.model = None
+        self.net = None
+        self.input_name = None
+        self.input_shape = None
+        self.output_names = None
+        self.output_shape = None
 
     def load_model(self):
         '''
@@ -41,8 +38,29 @@ class HeadPoseEstimation:
         If your model requires any Plugins, this is where you can load them.
         '''
         self.core = IECore()
-        net = self.core.load_network(network=model, device_name='CPU', num_requests=1)
+        self.model=IENetwork(self.model_structure, self.model_weights)
 
+
+        supported_layers = self.core.query_network(self.model, device_name=self.device)
+        unsupported_layers = [l for l in self.model.layers.keys() if l not in supported_layers]
+        if len(unsupported_layers) != 0 and self.device=='CPU':
+            print("Unsupported layers found: {}".format(unsupported_layers))
+            if not self.extensions==None:
+                self.core.add_extension(self.extensions, self.device)
+                supported_layers = self.core.query_network(network = self.model, device_name=self.device)
+                unsupported_layers = [l for l in self.model.layers.keys() if l not in supported_layers]
+                if len(unsupported_layers)!= 0:
+                    print("Even adding the extension there are unsupported layers found")
+                    exit(1)
+            else:
+                print("Check whether extensions are available to add to IECore and provide the path")
+                exit(1)
+
+        self.net = self.core.load_network(network=self.model, device_name=self.device, num_requests=1)
+        self.input_name=next(iter(self.model.inputs))
+        self.input_shape=self.model.inputs[self.input_name].shape
+        self.output_name=next(iter(self.model.outputs))
+        self.output_shape=self.model.outputs[self.output_name].shape
 
     def predict(self, image):
         '''
@@ -50,28 +68,28 @@ class HeadPoseEstimation:
         This method is meant for running predictions on the input image.
         '''
         p_frame = self.preprocess_input(image)
-        outputs = self.net.infer({self.input_name: p_frame})
-        outs_list = self.preprocess_outputs(outputs[self.output_name])
+        outputs = self.net.infer({self.input_name:p_frame})
+        outs_list = self.preprocess_output(outputs)
         return outs_list
 
     def check_model(self):
-
+        pass
 
     def preprocess_input(self, image):
-    '''
-    Before feeding the data into the model for inference,
-    you might have to preprocess it. This function is where you can do that.
-    '''
+        '''
+        Before feeding the data into the model for inference,
+        you might have to preprocess it. This function is where you can do that.
+        '''
         p_frame = cv2.resize(image, (self.input_shape[3], self.input_shape[2]))
         p_frame = p_frame.transpose((2,0,1))
         p_frame = p_frame.reshape(1, *p_frame.shape)
         return p_frame
 
     def preprocess_output(self, outputs):
-    '''
-    Before feeding the output of this model to the next model,
-    you might have to preprocess the output. This function is where you can do that.
-    '''
+        '''
+        Before feeding the output of this model to the next model,
+        you might have to preprocess the output. This function is where you can do that.
+        '''
         outs = []
         outs.append(outputs['angle_y_fc'].tolist()[0][0])
         outs.append(outputs['angle_p_fc'].tolist()[0][0])
