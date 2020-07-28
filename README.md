@@ -39,7 +39,7 @@ For default, the device to run the inference is CPU, but you can also use GPU, M
 
 
 ## Documentation
-The pipeline project can be understood as the following. First, it is obtained the cropped face of the person detected with the Face Detection Model. After this, the cropped face is input in the Facial Landamarks Detection model and in the Head Pose Estimation model. Finaly, boths outputs are feed in the Gaze Estimation model and then we obtain a gaze vector that will move the computer mouse controler. 
+The pipeline project can be understood as the following. First, it is obtained the cropped face of the person detected with the Face Detection Model. After this, the cropped face is input in the Facial Landamarks Detection model and in the Head Pose Estimation model. Finally, both outputs are feed in the Gaze Estimation model and then we obtain a gaze vector that will move the computer mouse controler. 
 
 You can check the models documatation in the following links:
 
