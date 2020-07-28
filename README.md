@@ -1,5 +1,5 @@
 # Computer Pointer Controller
-This project is a computer vision application developed with Intel Distribution of OpenVINO. This application was developed to control the computer pointer controler through the gaze estimation of the eyes. This program can be input as a video or a webcam. It was used four models to run Face Detection, Facial Landmarks Detection, Head Pose Estimation and Gaze Estimation all provided by OpenVINO.
+This project is a computer vision application developed with Intel Distribution of OpenVINO. This application was developed to control the computer pointer controler through the gaze estimation of the eyes. This program can be feed with a video file or a webcam. It was used four models to run Face Detection, Facial Landmarks Detection, Head Pose Estimation and Gaze Estimation all provided by OpenVINO.
 
 ## Project Set Up and Installation
 The requirements for this project are included in the requeriments.txt. The instalation can be done with the following command:
@@ -60,8 +60,17 @@ For the command line the following are the inputs to main.py:
 -d(optional) "Target device"
 
 ## Benchmarks
-*TODO:* Include the benchmark results of running your model on multiple hardwares and multiple model precisions. Your benchmarks can include: model loading time, input/output processing time, model inference time etc.
+I compared the inference Time, model loading Time, and frames per second model for the precisions INT8, FP16, FP32 in IEI Tank 870-Q170 edge node with an Intel® Core™ i5-6500TE (CPU) and IEI Tank 870-Q170 edge node with an Intel® Core™ i5-6500TE (CPU + Integrated Intel® HD Graphics 530 card GPU). 
 
+<b>INT8<b>
+CPU - inference time: 79s - loading time: 1.3s - FPS 8
+GPU - inference time: 74s - loading time: 52.4s - FPS 9
+<b>FP16<b>
+CPU - inference time: 77s - loading time: 1.3s - FPS 8
+GPU - inference time: 75s - loading time: 52.4s - FPS 9
+<b>FP32<b>
+CPU - inference time: 68s - loading time: 1.5s - FPS 9
+GPU - inference time: 69s - loading time: 55s - FPS 9
+ 
 ## Results
-*TODO:* Discuss the benchmark results and explain why you are getting the results you are getting. For instance, explain why there is difference in inference time for FP32, FP16 and INT8 models.
-
+Comparing the results above, we can se that when reducing the precision the inference time was higher although the loading time was slightly lower. The lower precisions models have lower accuracy when compared to the FP32. Comparing the CPU against GPU, the GPU's model loading time was much higher than the CPU's as expected. However, the FPS were very close between them.
